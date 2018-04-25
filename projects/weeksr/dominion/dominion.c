@@ -673,9 +673,9 @@ int playAdventurer(int drawntreasure, int currentPlayer, int cardDrawn, int temp
   return 0;
 }
 
-int playSmithy(int currentPlayer, struct gameState *state, int handPos, int i) {
+int playSmithy(int currentPlayer, struct gameState *state, int handPos) {
   //+3 Cards
-  for (i = 0; i < 4; i++){
+  for (int i = 0; i < 4; i++){
     drawCard(currentPlayer, state);
   }
   //discard played card from hand
@@ -718,7 +718,7 @@ int playOutpost(int currentPlayer, struct gameState *state, int handPos) {
 
 int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState *state, int handPos, int *bonus)
 {
-  int i;
+  int i = 0;
   int j;
   int k;
   int x;
@@ -880,7 +880,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       return 0;
 
     case smithy:
-      playSmithy(currentPlayer, state, handPos, i);
+      playSmithy(currentPlayer, state, handPos);
 
     case village:
       playVillage(currentPlayer, state, handPos);
