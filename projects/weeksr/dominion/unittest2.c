@@ -2,7 +2,6 @@
 #include "dominion_helpers.h"
 #include <string.h>
 #include <stdio.h>
-#include <assert.h>
 #include "rngs.h"
 
 // the below assertTrueTrue function was influenced by http://www.java-samples.com/showtutorial.php?tutorialid=451
@@ -22,7 +21,6 @@
 int main() {
     int seed = 1000;
     int numPlayer = 2;
-    int bonus;
     int k[10] = {adventurer, council_room, feast, gardens, mine,
       remodel, smithy, village, baron, great_hall};
     struct gameState G, testGameState;

@@ -22,16 +22,10 @@
 int main() {
     int seed = 1000;
     int numPlayer = 2;
-    int bonus;
     int k[10] = {adventurer, council_room, feast, gardens, mine,
       remodel, smithy, village, baron, great_hall};
     struct gameState G, testGameState;
-    int thisPlayer = 0;
-    int handpos = 0;
-    int handCount = 9;
-    int discarded = 1;
-
-
+  
     printf ("\n---- TESTING isGameOver() ----\n");
 
     printf ("\n---- TEST 1: 3 supply piles are empty ----\n");
