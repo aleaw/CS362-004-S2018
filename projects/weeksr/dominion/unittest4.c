@@ -25,7 +25,7 @@ int main() {
     int k[10] = {adventurer, council_room, feast, gardens, mine,
       remodel, smithy, village, baron, great_hall};
     struct gameState G, testGameState;
-  
+
     printf ("\n---- TESTING isGameOver() ----\n");
 
     printf ("\n---- TEST 1: 3 supply piles are empty ----\n");
@@ -49,6 +49,32 @@ int main() {
     G.supplyCount[province] = 0;
     memcpy(&testGameState, &G, sizeof(struct gameState));
     printf("Report if game is over: %d (1 means yes, 0 means no)\n", isGameOver(&testGameState));
+    assertTrue(isGameOver(&testGameState), "isGameOver");
+
+    printf ("\n---- TEST 3: only 2 supply piles are empty ----\n");
+
+    memset(&G, 23, sizeof(struct gameState));   // clear the game state
+    initializeGame(numPlayer, k, seed, &G); // initialize a new game
+
+    G.supplyCount[curse] = 0;
+    G.supplyCount[copper] = 0;
+    G.supplyCount[province] = 1;
+
+    memcpy(&testGameState, &G, sizeof(struct gameState));
+    printf("is game over? %d, expected: %d (1 means game is over, 0 means game not over)\n", isGameOver(&testGameState), 0);
+    assertTrue(isGameOver(&testGameState) == 0, "isGameOver");
+
+    printf ("\n---- TEST 4: only 2 supply piles are empty but one is province----\n");
+
+    memset(&G, 23, sizeof(struct gameState));   // clear the game state
+    initializeGame(numPlayer, k, seed, &G); // initialize a new game
+
+    G.supplyCount[curse] = 0;
+    G.supplyCount[adventurer] = 5;
+    G.supplyCount[province] = 0;
+
+    memcpy(&testGameState, &G, sizeof(struct gameState));
+    printf("is game over? %d, expected: %d (1 means game is over, 0 means game not over)\n", isGameOver(&testGameState), 1);
     assertTrue(isGameOver(&testGameState), "isGameOver");
 
     printf("All tests done!\n");

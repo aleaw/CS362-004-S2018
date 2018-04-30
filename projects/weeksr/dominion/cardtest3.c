@@ -36,6 +36,7 @@
      int seed = 1000;
      int numPlayers = 2;
      int thisPlayer = 0;
+     int m;
  	   struct gameState G, testGameState;
  	   int k[10] = {adventurer, embargo, village, minion, mine, cutpurse,
  			sea_hag, tribute, smithy, council_room};
@@ -50,21 +51,58 @@
   // check that hand has previous amount of treasure cards + 2
   // make sure all other drawn cards are discarded: handCount = handCount + 2
 
-  memcpy(&testGameState, &G, sizeof(struct gameState));
-  cardEffect(adventurer, choice1, choice2, choice3, &testGameState, handpos, &bonus);
+  printf("\n----------------- Test 1: no treasure in deck and hand: %s ----------------\n", TESTCARD);
 
-  drawnTreasure = 2;
+  G.handCount[thisPlayer] = 5;
+  G.hand[thisPlayer][0] = adventurer;
+  G.hand[thisPlayer][1] = duchy;
+  G.hand[thisPlayer][2] = duchy;
+  G.hand[thisPlayer][3] = duchy;
+  G.hand[thisPlayer][4] = duchy;
+
+  G.deckCount[thisPlayer] = 5;
+  G.deck[thisPlayer][0] = estate;
+  G.deck[thisPlayer][1] = estate;
+  G.deck[thisPlayer][2] = estate;
+  G.deck[thisPlayer][3] = estate;
+  G.deck[thisPlayer][4] = estate;
+  G.coins = 0;
+  G.discardCount[thisPlayer] = 0;
+
+  memcpy(&testGameState, &G, sizeof(struct gameState));
+
+  printf("starting cards: ");
+  for (m=0; m<testGameState.handCount[thisPlayer]; m++) {
+    printf("(%d)", testGameState.hand[thisPlayer][m]);
+  }
+  printf("; ");
+
+  playCard(handpos, choice1, choice2, choice3, &testGameState);
+
+  printf("ending cards: ");
+  for (m=0; m<testGameState.handCount[thisPlayer]; m++) {
+    printf("(%d)", testGameState.hand[thisPlayer][m]);
+    if(m == 0 || m >= 5) {
+      assertTrue(testGameState.hand[thisPlayer][m] == copper || testGameState.hand[thisPlayer][m] == silver || testGameState.hand[thisPlayer][m] == gold, "drawn cards are treasure cards")
+    }
+
+  }
+  printf("; ");
+
+  drawnTreasure = 0;
   printf("\n*** Testing stats of player %d ***\n", thisPlayer);
   // expected number of new cards
-  printf("hand count = %d, expected = %d\n", testGameState.handCount[thisPlayer], G.handCount[thisPlayer] + drawnTreasure - discarded);
-  printf("deck count = %d, expected = %d\n", testGameState.deckCount[thisPlayer], G.deckCount[thisPlayer] + shuffledCards - (drawnTreasure + discarded));
+  printf("hand count = %d, expected = %d\n", testGameState.handCount[thisPlayer], G.handCount[thisPlayer] + drawnTreasure);
+  printf("deck count = %d, expected = %d\n", testGameState.deckCount[thisPlayer], G.deckCount[thisPlayer] - (drawnTreasure + G.discardCount[thisPlayer]));
   printf("action count = %d, expected = %d\n", testGameState.numActions, G.numActions);
   printf("coin count = %d, expected = %d\n", testGameState.coins, G.coins);
 
 
-  assertTrue(testGameState.handCount[thisPlayer] == G.handCount[thisPlayer] + drawnTreasure - discarded, "current player's hand count");
-  assertTrue(testGameState.deckCount[thisPlayer] == G.deckCount[thisPlayer] - drawnCards + shuffledCards, "current player's deck count");
+  assertTrue(testGameState.handCount[thisPlayer] == G.handCount[thisPlayer] + drawnTreasure, "current player's hand count");
+  assertTrue(testGameState.deckCount[thisPlayer] ==  G.deckCount[thisPlayer] - (drawnTreasure + G.discardCount[thisPlayer]), "current player's deck count");
   assertTrue(testGameState.numActions == G.numActions, "current player's number of actions");
+  assertTrue(testGameState.coins == G.coins, "current player's number of actions");
+
 
 
   thisPlayer = 1;
@@ -77,6 +115,200 @@
   assertTrue(testGameState.handCount[thisPlayer] == G.handCount[thisPlayer], "noncurrent player's hand count");
   assertTrue(testGameState.deckCount[thisPlayer] == G.deckCount[thisPlayer], "noncurrent player's deck count");
   assertTrue(testGameState.numActions == G.numActions, "noncurrent player's number of actions");
+
+
+  printf("\n----------------- Test 2: 1 treasure in deck  hand: %s ----------------\n", TESTCARD);
+
+  G.handCount[thisPlayer] = 5;
+  G.hand[thisPlayer][0] = adventurer;
+  G.hand[thisPlayer][1] = duchy;
+  G.hand[thisPlayer][2] = duchy;
+  G.hand[thisPlayer][3] = duchy;
+  G.hand[thisPlayer][4] = duchy;
+
+  G.deckCount[thisPlayer] = 5;
+  G.deck[thisPlayer][0] = estate;
+  G.deck[thisPlayer][1] = estate;
+  G.deck[thisPlayer][2] = estate;
+  G.deck[thisPlayer][3] = copper;
+  G.deck[thisPlayer][4] = estate;
+  G.coins = 1;
+  G.discardCount[thisPlayer] = 0;
+
+  memcpy(&testGameState, &G, sizeof(struct gameState));
+
+  printf("starting cards: ");
+  for (m=0; m<testGameState.handCount[thisPlayer]; m++) {
+    printf("(%d)", testGameState.hand[thisPlayer][m]);
+  }
+  printf("; ");
+
+  playCard(handpos, choice1, choice2, choice3, &testGameState);
+
+  printf("ending cards: ");
+  for (m=0; m<testGameState.handCount[thisPlayer]; m++) {
+    printf("(%d)", testGameState.hand[thisPlayer][m]);
+    if(m == 0 || m >= 5) {
+      assertTrue(testGameState.hand[thisPlayer][m] == copper || testGameState.hand[thisPlayer][m] == silver || testGameState.hand[thisPlayer][m] == gold, "drawn cards are treasure cards")
+    }
+  }
+  printf("; ");
+
+  drawnTreasure = 1;
+  printf("\n*** Testing stats of player %d ***\n", thisPlayer);
+  // expected number of new cards
+  printf("hand count = %d, expected = %d\n", testGameState.handCount[thisPlayer], G.handCount[thisPlayer] + drawnTreasure);
+  printf("deck count = %d, expected = %d\n", testGameState.deckCount[thisPlayer], G.deckCount[thisPlayer] - (drawnTreasure + G.discardCount[thisPlayer]));
+  printf("action count = %d, expected = %d\n", testGameState.numActions, G.numActions);
+  printf("coin count = %d, expected = %d\n", testGameState.coins, G.coins);
+
+
+  assertTrue(testGameState.handCount[thisPlayer] == G.handCount[thisPlayer] + drawnTreasure, "current player's hand count");
+  assertTrue(testGameState.deckCount[thisPlayer] ==  G.deckCount[thisPlayer] - (drawnTreasure + G.discardCount[thisPlayer]), "current player's deck count");
+  assertTrue(testGameState.numActions == G.numActions, "current player's number of actions");
+  assertTrue(testGameState.coins == G.coins, "current player's number of actions");
+
+
+
+  thisPlayer = 1;
+  drawnCards = 0;
+  printf("\n*** Testing stats of player %d ***\n", thisPlayer);
+  printf("hand count = %d, expected = %d\n", testGameState.handCount[thisPlayer], G.handCount[thisPlayer]);
+  printf("deck count = %d, expected = %d\n", testGameState.deckCount[thisPlayer], G.deckCount[thisPlayer]);
+  printf("action count = %d, expected = %d\n", testGameState.numActions, G.numActions);
+
+  assertTrue(testGameState.handCount[thisPlayer] == G.handCount[thisPlayer], "noncurrent player's hand count");
+  assertTrue(testGameState.deckCount[thisPlayer] == G.deckCount[thisPlayer], "noncurrent player's deck count");
+  assertTrue(testGameState.numActions == G.numActions, "noncurrent player's number of actions");
+
+  printf("\n----------------- Test 2: 2 treasures in deck  hand: %s ----------------\n", TESTCARD);
+
+  G.handCount[thisPlayer] = 5;
+  G.hand[thisPlayer][0] = adventurer;
+  G.hand[thisPlayer][1] = duchy;
+  G.hand[thisPlayer][2] = duchy;
+  G.hand[thisPlayer][3] = duchy;
+  G.hand[thisPlayer][4] = duchy;
+
+  G.deckCount[thisPlayer] = 5;
+  G.deck[thisPlayer][0] = estate;
+  G.deck[thisPlayer][1] = copper;
+  G.deck[thisPlayer][2] = estate;
+  G.deck[thisPlayer][3] = copper;
+  G.deck[thisPlayer][4] = estate;
+  G.coins = 2;
+  G.discardCount[thisPlayer] = 0;
+
+  memcpy(&testGameState, &G, sizeof(struct gameState));
+
+  printf("starting cards: ");
+  for (m=0; m<testGameState.handCount[thisPlayer]; m++) {
+    printf("(%d)", testGameState.hand[thisPlayer][m]);
+  }
+  printf("; ");
+
+  playCard(handpos, choice1, choice2, choice3, &testGameState);
+
+  printf("ending cards: ");
+  for (m=0; m<testGameState.handCount[thisPlayer]; m++) {
+    printf("(%d)", testGameState.hand[thisPlayer][m]);
+    if(m == 0 || m >= 5) {
+      assertTrue(testGameState.hand[thisPlayer][m] == copper || testGameState.hand[thisPlayer][m] == silver || testGameState.hand[thisPlayer][m] == gold, "drawn cards are treasure cards")
+    }
+  }
+  printf("; ");
+
+  drawnTreasure = 2;
+  printf("\n*** Testing stats of player %d ***\n", thisPlayer);
+  // expected number of new cards
+  printf("hand count = %d, expected = %d\n", testGameState.handCount[thisPlayer], G.handCount[thisPlayer] + drawnTreasure);
+  printf("deck count = %d, expected = %d\n", testGameState.deckCount[thisPlayer], G.deckCount[thisPlayer] - (drawnTreasure + G.discardCount[thisPlayer]));
+  printf("action count = %d, expected = %d\n", testGameState.numActions, G.numActions);
+  printf("coin count = %d, expected = %d\n", testGameState.coins, G.coins);
+
+
+  assertTrue(testGameState.handCount[thisPlayer] == G.handCount[thisPlayer] + drawnTreasure, "current player's hand count");
+  assertTrue(testGameState.deckCount[thisPlayer] ==  G.deckCount[thisPlayer] - (drawnTreasure + G.discardCount[thisPlayer]), "current player's deck count");
+  assertTrue(testGameState.numActions == G.numActions, "current player's number of actions");
+  assertTrue(testGameState.coins == G.coins, "current player's number of actions");
+
+
+
+  thisPlayer = 1;
+  drawnCards = 0;
+  printf("\n*** Testing stats of player %d ***\n", thisPlayer);
+  printf("hand count = %d, expected = %d\n", testGameState.handCount[thisPlayer], G.handCount[thisPlayer]);
+  printf("deck count = %d, expected = %d\n", testGameState.deckCount[thisPlayer], G.deckCount[thisPlayer]);
+  printf("action count = %d, expected = %d\n", testGameState.numActions, G.numActions);
+
+  assertTrue(testGameState.handCount[thisPlayer] == G.handCount[thisPlayer], "noncurrent player's hand count");
+  assertTrue(testGameState.deckCount[thisPlayer] == G.deckCount[thisPlayer], "noncurrent player's deck count");
+  assertTrue(testGameState.numActions == G.numActions, "noncurrent player's number of actions");
+
+  printf("\n----------------- Test 2: 2 silvers in deck  hand: %s ----------------\n", TESTCARD);
+
+  G.handCount[thisPlayer] = 5;
+  G.hand[thisPlayer][0] = adventurer;
+  G.hand[thisPlayer][1] = duchy;
+  G.hand[thisPlayer][2] = duchy;
+  G.hand[thisPlayer][3] = duchy;
+  G.hand[thisPlayer][4] = duchy;
+
+  G.deckCount[thisPlayer] = 5;
+  G.deck[thisPlayer][0] = estate;
+  G.deck[thisPlayer][1] = silver;
+  G.deck[thisPlayer][2] = estate;
+  G.deck[thisPlayer][3] = silver;
+  G.deck[thisPlayer][4] = estate;
+  G.coins = 4;
+  G.discardCount[thisPlayer] = 0;
+
+  memcpy(&testGameState, &G, sizeof(struct gameState));
+
+  printf("starting cards: ");
+  for (m=0; m<testGameState.handCount[thisPlayer]; m++) {
+    printf("(%d)", testGameState.hand[thisPlayer][m]);
+  }
+  printf("; ");
+
+  playCard(handpos, choice1, choice2, choice3, &testGameState);
+
+  printf("ending cards: ");
+  for (m=0; m<testGameState.handCount[thisPlayer]; m++) {
+    printf("(%d)", testGameState.hand[thisPlayer][m]);
+    if(m == 0 || m >= 5) {
+      assertTrue(testGameState.hand[thisPlayer][m] == copper || testGameState.hand[thisPlayer][m] == silver || testGameState.hand[thisPlayer][m] == gold, "drawn cards are treasure cards")
+    }
+  }
+  printf("; ");
+
+  drawnTreasure = 2;
+  printf("\n*** Testing stats of player %d ***\n", thisPlayer);
+  // expected number of new cards
+  printf("hand count = %d, expected = %d\n", testGameState.handCount[thisPlayer], G.handCount[thisPlayer] + drawnTreasure);
+  printf("deck count = %d, expected = %d\n", testGameState.deckCount[thisPlayer], G.deckCount[thisPlayer] - (drawnTreasure + G.discardCount[thisPlayer]));
+  printf("action count = %d, expected = %d\n", testGameState.numActions, G.numActions);
+  printf("coin count = %d, expected = %d\n", testGameState.coins, G.coins);
+
+
+  assertTrue(testGameState.handCount[thisPlayer] == G.handCount[thisPlayer] + drawnTreasure, "current player's hand count");
+  assertTrue(testGameState.deckCount[thisPlayer] ==  G.deckCount[thisPlayer] - (drawnTreasure + G.discardCount[thisPlayer]), "current player's deck count");
+  assertTrue(testGameState.numActions == G.numActions, "current player's number of actions");
+  assertTrue(testGameState.coins == G.coins, "current player's number of actions");
+
+
+
+  thisPlayer = 1;
+  drawnCards = 0;
+  printf("\n*** Testing stats of player %d ***\n", thisPlayer);
+  printf("hand count = %d, expected = %d\n", testGameState.handCount[thisPlayer], G.handCount[thisPlayer]);
+  printf("deck count = %d, expected = %d\n", testGameState.deckCount[thisPlayer], G.deckCount[thisPlayer]);
+  printf("action count = %d, expected = %d\n", testGameState.numActions, G.numActions);
+
+  assertTrue(testGameState.handCount[thisPlayer] == G.handCount[thisPlayer], "noncurrent player's hand count");
+  assertTrue(testGameState.deckCount[thisPlayer] == G.deckCount[thisPlayer], "noncurrent player's deck count");
+  assertTrue(testGameState.numActions == G.numActions, "noncurrent player's number of actions");
+
 
   printf("\n >>>>> SUCCESS: Testing complete %s <<<<<\n\n", TESTCARD);
 

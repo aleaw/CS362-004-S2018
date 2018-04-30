@@ -27,6 +27,7 @@ int main() {
     int expectedCurrentPlayer = 0;
 
     printf ("\n---- TESTING whoseTurn() with 2 players ----\n");
+    numPlayer = 2;
     memset(&G, 23, sizeof(struct gameState));   // clear the game state
     initializeGame(numPlayer, k, seed, &G); // initialize a new game
     memcpy(&testGameState, &G, sizeof(struct gameState));
