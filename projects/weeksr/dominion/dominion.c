@@ -677,15 +677,15 @@ int playAdventurer(int drawntreasure, int currentPlayer, int cardDrawn, int temp
 
 int playSmithy(int currentPlayer, struct gameState *state, int handPos) {
   //+3 Cards
-  printf("In playSmithy, drawing cards...\n");
+  // printf("In playSmithy, drawing cards...\n");
   for (int i = 0; i < 4; i++){
     drawCard(currentPlayer, state);
-    printf("Card %d drawn...\n", i);
+    // printf("Card %d drawn...\n", i);
   }
   //discard played card from hand
-  printf("In playSmithy, discarding card from handpos: %d...\n", handPos);
+  // printf("In playSmithy, discarding card from handpos: %d...\n", handPos);
   discardCard(handPos, currentPlayer, state, 0);
-  printf("Cards discarded.\n");
+  // printf("Cards discarded.\n");
   return 0;
 }
 

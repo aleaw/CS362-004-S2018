@@ -22,32 +22,71 @@
           }
 #endif
 
-// int checkSmithyCard(int p, struct gameState *post, int handPosition) {
+int playDom(int handPosition, int kingdom[10], int seed);
+
 int checkSmithyCard(int handPosition, int choice1, int choice2, int choice3, struct gameState *post, int p) {
 
   struct gameState pre;
   memcpy(&pre, post, sizeof(struct gameState));
 
-  printf("Call playCard\n");
   // int r = playSmithy(p, post, handPosition);
   int r = playCard(handPosition, choice1, choice2, choice3, post);
   pre.numActions--;
   pre.playedCardCount++;
+  int drawnCards = 0;
 
+  if(pre.deckCount[p] >= 3 || pre.discardCount[p] >= 4){
+    drawnCards = 3;
 
-  if(pre.deckCount[p] == 1 && pre.discardCount[p] == 0) {
-    pre.handCount[p] += 1;
-    pre.deckCount[p]--;
-  } else if (pre.deckCount[p] == 2 && pre.discardCount[p] == 0) {
-    pre.handCount[p] +=2;
-    pre.deckCount[p] -=2;
-  } else if(pre.deckCount[p] == 3 && pre.discardCount[p] == 0) {
-    pre.handCount[p] +=3;
-    pre.deckCount[p] -=3;
+    printf("hand count = %d, expected = %d\n", post->handCount[p], pre.handCount[p] + drawnCards);
+    printf("deck count = %d, expected = %d\n", post->deckCount[p], pre.deckCount[p] - drawnCards);
+
+    assertTrue(post->handCount[p] == pre.handCount[p] + drawnCards, "current player's hand count");
+    assertTrue(post->deckCount[p] == pre.deckCount[p] - drawnCards, "current player's deck count");
   }
 
+  if(pre.deckCount[p] == 2 || pre.discardCount[p] == 0){
+    drawnCards = 2;
+
+    printf("hand count = %d, expected = %d\n", post->handCount[p], pre.handCount[p] + drawnCards);
+    printf("deck count = %d, expected = %d\n", post->deckCount[p], pre.deckCount[p] - drawnCards);
+
+    assertTrue(post->handCount[p] == pre.handCount[p] + drawnCards, "current player's hand count");
+    assertTrue(post->deckCount[p] == pre.deckCount[p] - drawnCards, "current player's deck count");
+  }
+
+  if(pre.deckCount[p] == 1 || pre.discardCount[p] == 0){
+    drawnCards = 1;
+
+    printf("hand count = %d, expected = %d\n", post->handCount[p], pre.handCount[p] + drawnCards);
+    printf("deck count = %d, expected = %d\n", post->deckCount[p], pre.deckCount[p] - drawnCards);
+
+    assertTrue(post->handCount[p] == pre.handCount[p] + drawnCards, "current player's hand count");
+    assertTrue(post->deckCount[p] == pre.deckCount[p] - drawnCards, "current player's deck count");
+  }
+
+  if(pre.deckCount[p] == 0 || pre.discardCount[p] == 0){
+    drawnCards = 0;
+
+    printf("hand count = %d, expected = %d\n", post->handCount[p], pre.handCount[p] + drawnCards);
+    printf("deck count = %d, expected = %d\n", post->deckCount[p], pre.deckCount[p] - drawnCards);
+
+    assertTrue(post->handCount[p] == pre.handCount[p] + drawnCards, "current player's hand count");
+    assertTrue(post->deckCount[p] == pre.deckCount[p] - drawnCards, "current player's deck count");
+  }
+
+  if(pre.deckCount[p] == 0 || pre.discardCount[p] >= 3){
+    drawnCards = 3;
+
+    printf("hand count = %d, expected = %d\n", post->handCount[p], pre.handCount[p] + drawnCards);
+    printf("deck count = %d, expected = %d\n", post->deckCount[p], pre.deckCount[p] - drawnCards);
+
+    assertTrue(post->handCount[p] == pre.handCount[p] + drawnCards, "current player's hand count");
+    assertTrue(post->deckCount[p] == pre.deckCount[p] + (pre.discardCount[p] - drawnCards), "current player's deck count");
+  }
+
+
   assertTrue(r == 0, "Play playSmithy() returned 0");
-  assertTrue(memcmp(&pre, post, sizeof(struct gameState)) == 0, "(memcmp(&pre, post, sizeof(struct gameState)) == 0)");
 
   return r;
 }
@@ -67,14 +106,14 @@ int main() {
 
 srand(time(NULL));
   // int playSmithy(int currentPlayer, struct gameState *state, int handPos) {
-int currentPlayer, handPos, i, n, randomNum;
-
+int currentPlayer, handPos, i, n, randomNum, choice1, choice2, choice3;
+choice1 = 0; choice2 = 0; choice3 = 0;
 struct gameState G;
 
 SelectStream(2);
 PutSeed(3);
 
-for (n = 0; n < 2000; n++) {
+for (n = 0; n < 10000; n++) {
   G = *newGame();
 
   int k[10] = {0};
@@ -93,9 +132,7 @@ for (n = 0; n < 2000; n++) {
   kingdomCardsPointer = kingdomCards(k[0], k[1], k[2], k[3], k[4], k[5], k[6], k[7], k[8], k[9]);
 
   G.numPlayers = rand() % 4;
-  printf("number of players: %d\n", G.numPlayers);
   currentPlayer = rand() % (G.numPlayers + 1);
-  printf("Current Player: %d\n", currentPlayer );
   G.phase = 0;
   G.numActions = 1;
   G.whoseTurn = currentPlayer;
@@ -103,9 +140,38 @@ for (n = 0; n < 2000; n++) {
   G.discardCount[currentPlayer] = floor(Random() * MAX_DECK);
   G.handCount[currentPlayer] = floor(Random() * MAX_HAND);
   G.playedCardCount = floor(Random() * MAX_HAND);
-  printf("Hand count of player: %d\n", G.handCount[currentPlayer]);
 
-  printf("Setting up hand of player...\n");
+  // printf("Hand count of player: %d\n", G.handCount[currentPlayer]);
+
+  for(int j = 0; j < G.deckCount[currentPlayer]; j++) {
+    randomNum = rand() % 26;
+    G.deck[currentPlayer][j] = randomNum;
+  }
+  for(int j = 0; j < G.discardCount[currentPlayer]; j++) {
+    randomNum = rand() % 26;
+    G.discard[currentPlayer][j] = randomNum;
+  }
+
+  // randomize hand, deck, and discard
+  if(G.numPlayers > 1){
+    for(int i = 0; i < G.numPlayers; i++){
+      //G.handCount[currentPlayer+1] = floor(Random() * MAX_HAND);
+      for(int j = 0; j < G.handCount[i]; j++) {
+        randomNum = rand() % 26;
+        G.hand[i][j] = randomNum;
+      }
+      for(int j = 0; j < G.deckCount[i]; j++) {
+        randomNum = rand() % 26;
+        G.deck[i][j] = randomNum;
+      }
+      for(int j = 0; j < G.discardCount[i]; j++) {
+        randomNum = rand() % 26;
+        G.discard[i][j] = randomNum;
+      }
+    }
+  }
+
+  // printf("Setting up hand of player...\n");
   for(int j = 0; j < G.handCount[currentPlayer]; j++) {
     randomNum = rand() % 9;
     G.hand[currentPlayer][j] = k[randomNum];
@@ -113,140 +179,283 @@ for (n = 0; n < 2000; n++) {
   }
   randomNum = 1 + rand() % 2000;
 
-  printf("Setting handPos 0f smithy...\n");
+  // printf("Setting handPos 0f smithy...\n");
   handPos = floor(Random() * G.handCount[currentPlayer]);
   G.hand[currentPlayer][handPos] = smithy;
-  printf("handPos: %d\n", handPos);
+  // printf("handPos: %d\n", handPos);
 
-  printf("DeckCount: %d\n", G.deckCount[currentPlayer]);
+  // printf("DeckCount: %d\n", G.deckCount[currentPlayer]);
 
-  printf("initializeGame...\n");
+  // printf("initializeGame...\n");
   initializeGame(G.numPlayers+1, k, randomNum, &G);
   // checkSmithyCard(currentPlayer, &G, handPos);
-  printf("Call checkSmithyCard()..\n");
-  printf("phase: %d\n", G.phase);
+  // printf("Call checkSmithyCard()..\n");
+  // printf("phase: %d\n", G.phase);
   checkSmithyCard(handPos, 0, 0, 0, &G, currentPlayer);
 
-  int money = 0;
-  int smithyPos = handPos;
-  int adventurerPos = -1;
-  int i=0;
+  //play baron
+  if(G.handCount[currentPlayer] > 2){
+    int handPosBaron = floor(Random() * G.handCount[currentPlayer]);
+    G.hand[currentPlayer][handPosBaron] = baron;
+    while(handPosBaron == handPos){
+      handPosBaron = floor(Random() * G.handCount[currentPlayer]);
+    }
+    choice1 = rand() % 100;
+    playCard(handPosBaron, choice1, choice2, choice3, &G);
+  }
 
-  int numSmithies = 0;
-  int numAdventurers = 0;
+  // play mine
+  if(G.handCount[currentPlayer] > 2){
+    int handPosMine = floor(Random() * G.handCount[currentPlayer]);
+    int moneyPos = floor(Random() * G.handCount[currentPlayer]);
+    G.hand[currentPlayer][moneyPos] = 3 + rand() % 7;
+    while(handPosMine == moneyPos){
+      moneyPos = floor(Random() * G.handCount[currentPlayer]);
+    }
+    G.hand[currentPlayer][handPosMine] = mine;
+    choice1 = moneyPos;
+    int choice2 = floor(Random() * G.supplyCount[rand() % 27]);
+    playCard(handPosMine, choice1, choice2, choice3, &G);
+  }
 
-  while (!isGameOver(&G)) {
-    money = 0;
-    smithyPos = -1;
-    adventurerPos = -1;
-    for (i = 0; i < numHandCards(&G); i++) {
-      if (handCard(i, &G) == copper)
-    money++;
-      else if (handCard(i, &G) == silver)
-    money += 2;
-      else if (handCard(i, &G) == gold)
-    money += 3;
-      else if (handCard(i, &G) == smithy)
-    smithyPos = i;
-      else if (handCard(i, &G) == adventurer)
-    adventurerPos = i;
+  // play remodel
+  if(G.handCount[currentPlayer] > 2){
+    int handPosRemodel = floor(Random() * G.handCount[currentPlayer]);
+    G.hand[currentPlayer][handPosRemodel] = remodel;
+    int trashPos = floor(Random() * G.handCount[currentPlayer]);
+    G.hand[currentPlayer][trashPos] = 3 + rand() % 7;
+    while(handPosRemodel == trashPos){
+      trashPos = floor(Random() * G.handCount[currentPlayer]);
+    }
+    choice1 = trashPos;
+    int choice2 = floor(Random() * G.supplyCount[rand() % 27]);
+    playCard(handPosRemodel, choice1, choice2, choice3, &G);
+  }
+
+  // play minion
+  if(G.handCount[currentPlayer] > 2){
+    int handPosMinion = floor(Random() * G.handCount[currentPlayer]);
+    G.hand[currentPlayer][handPosMinion] = minion;
+    choice1 = rand() % 2;
+    int choice2 = rand() % 2;
+    G.handCount[currentPlayer+1] = 6;
+    playCard(handPosMinion, choice1, choice2, choice3, &G);
+  }
+
+  // play steward
+ if(G.handCount[currentPlayer] > 2){
+    //choice1 = 0; choice2 = 0; choice3 = 0;
+    // randomize choice selection
+    randomNum = rand() % 3;
+    choice1 = randomNum;
+    int handPosSteward = floor(Random() * G.handCount[currentPlayer]);
+    G.hand[currentPlayer][handPosSteward] = steward;
+    playCard(handPosSteward, choice1, choice2, choice3, &G);
+  }
+
+  // play tribute
+  if(G.handCount[currentPlayer] > 2){
+     int handPosTribute = floor(Random() * G.handCount[currentPlayer]);
+     G.hand[currentPlayer][handPosTribute] = tribute;
+     playCard(handPosTribute, choice1, choice2, choice3, &G);
+   }
+
+   // play ambassador
+   if(G.handCount[currentPlayer] > 2){
+      int handPosAmbassador = floor(Random() * G.handCount[currentPlayer]);
+      G.hand[currentPlayer][handPosAmbassador] = ambassador;
+      choice1 = floor(Random() * G.handCount[currentPlayer]);
+      choice2 = floor(Random() * G.handCount[currentPlayer]);
+      playCard(handPosAmbassador, choice1, choice2, choice3, &G);
     }
 
-    if (whoseTurn(&G) == 0) {
-      if (smithyPos != -1) {
-        printf("0: smithy played from position %d\n", smithyPos);
-        checkSmithyCard(handPos, 0, 0, 0, &G, currentPlayer);
-        //playCard(smithyPos, -1, -1, -1, &G);
-        printf("smithy played.\n");
-        money = 0;
-        i=0;
-        while(i<numHandCards(&G)){
-          if (handCard(i, &G) == copper){
-            playCard(i, -1, -1, -1, &G);
-            money++;
-          }
-          else if (handCard(i, &G) == silver){
-            playCard(i, -1, -1, -1, &G);
-            money += 2;
-          }
-          else if (handCard(i, &G) == gold){
-            playCard(i, -1, -1, -1, &G);
-            money += 3;
-          }
-          i++;
-        }
-      }
+    //play treasure_map
+    if(G.handCount[currentPlayer] > 2){
+       int handPosTreasureMap = floor(Random() * G.handCount[currentPlayer]);
+       G.hand[currentPlayer][handPosTreasureMap] = treasure_map;
+       handPosTreasureMap = floor(Random() * G.handCount[currentPlayer]);
+       G.hand[currentPlayer][handPosTreasureMap] = treasure_map;
+       playCard(handPosTreasureMap, choice1, choice2, choice3, &G);
+     }
 
-      if (money >= 8) {
-        printf("0: bought province\n");
-        buyCard(province, &G);
-      }
-      else if (money >= 6) {
-        printf("0: bought gold\n");
-        buyCard(gold, &G);
-      }
-      else if ((money >= 4) && (numSmithies < 2)) {
-        printf("0: bought smithy\n");
-        buyCard(smithy, &G);
-        numSmithies++;
-      }
-      else if (money >= 3) {
-        printf("0: bought silver\n");
-        buyCard(silver, &G);
-      }
+   i = 10;// printf("Playing card...%d\n", handCard(i, &G));
+  playCard(G.hand[currentPlayer][i], choice1, choice2, choice3, &G);
 
-      printf("0: end turn\n");
-      endTurn(&G);
-    }
-    else {
-        playCard(adventurer, -1, -1, -1, &G);
-        money = 0;
-        i=0;
-        while(i<numHandCards(&G)){
-          if (handCard(i, &G) == copper){
-            playCard(i, -1, -1, -1, &G);
-            money++;
-          }
-          else if (handCard(i, &G) == silver){
-            playCard(i, -1, -1, -1, &G);
-            money += 2;
-          }
-          else if (handCard(i, &G) == gold){
-            playCard(i, -1, -1, -1, &G);
-            money += 3;
-          }
-          i++;
-        }
-      }
+  playDom(handPos, k, randomNum);
 
-      if (money >= 8) {
-        printf("1: bought province\n");
-        buyCard(province, &G);
-      }
-      else if ((money >= 6) && (numAdventurers < 2)) {
-        printf("1: bought adventurer\n");
-        buyCard(adventurer, &G);
-        numAdventurers++;
-      }else if (money >= 6){
-        printf("1: bought gold\n");
-      buyCard(gold, &G);
-        }
-      else if (money >= 3){
-        printf("1: bought silver\n");
-      buyCard(silver, &G);
-      }
-      printf("1: endTurn\n");
-
-      endTurn(&G);
-    }
-   // end of While
-
-  printf ("Finished game.\n");
-  printf ("Player 0: %d\nPlayer 1: %d\n", scoreFor(0, &G), scoreFor(1, &G));
   int playerArray[G.numPlayers];
   for(i=0; i< G.numPlayers; i++) {
     playerArray[i] = i;
   }
   getWinners(playerArray, &G);
  }
+ return 0;
 }
+
+// a simple simulated play through of a dominion game to test card usage in a "real" Setting
+// code was taken from playdom.c
+int playDom(int handPosition, int kingdom[10], int seed) {
+    struct gameState G;
+    int n;
+    int i=0;
+
+    seed = 100 + rand() % 2000;
+    initializeGame(2, kingdom, seed, &G);
+
+    int money = 0;
+    int smithyPos = -1;
+    int adventurerPos = -1;
+
+    int numSmithies = 0;
+    int numAdventurers = 0;
+
+    while (!isGameOver(&G)) {
+      money = 0;
+      smithyPos = -1;
+      adventurerPos = -1;
+      for (i = 0; i < numHandCards(&G); i++) {
+        if (handCard(i, &G) == copper)
+      money++;
+        else if (handCard(i, &G) == silver)
+      money += 2;
+        else if (handCard(i, &G) == gold)
+      money += 3;
+        else if (handCard(i, &G) == smithy)
+      smithyPos = i;
+        else if (handCard(i, &G) == adventurer)
+      adventurerPos = i;
+        else {
+          smithyPos = i;
+          adventurerPos = i;
+        }
+      }
+
+      if (whoseTurn(&G) == 0) {
+        if (smithyPos != -1) {
+          // printf("0: smithy played from position %d\n", smithyPos);
+          playCard(smithyPos, -1, -1, -1, &G);
+          // printf("smithy played.\n");
+          money = 0;
+          i=0;
+          while(i<numHandCards(&G)){
+            if (handCard(i, &G) == copper){
+              playCard(i, -1, -1, -1, &G);
+              money++;
+            }
+            else if (handCard(i, &G) == silver){
+              playCard(i, -1, -1, -1, &G);
+              money += 2;
+            }
+            else if (handCard(i, &G) == gold){
+              playCard(i, -1, -1, -1, &G);
+              money += 3;
+            }
+            i++;
+          }
+
+      }
+
+        if (money >= 8) {
+          // printf("0: bought province\n");
+          buyCard(province, &G);
+        }
+        else if (money >= 6) {
+          // printf("0: bought gold\n");
+          buyCard(gold, &G);
+        }
+        else if ((money >= 4) && (numSmithies < 2)) {
+          // printf("0: bought smithy\n");
+          buyCard(smithy, &G);
+          numSmithies++;
+        }
+        else if (money >= 3) {
+          // printf("0: bought silver\n");
+          buyCard(silver, &G);
+        }
+
+        // printf("0: end turn\n");
+        endTurn(&G);
+      }
+      else {
+        if (adventurerPos != -1) {
+          // printf("1: adventurer played from position %d\n", adventurerPos);
+          checkSmithyCard(handPosition, -1, -1, -1, &G, 1);
+          money = 0;
+          i=0;
+          while(i<numHandCards(&G)){
+            if(handCard(i, &G) == steward){
+              // printf("1: steward played from position %d\n", i);
+              playCard(i, 1, 0, 0, &G);
+            }
+            else if(handCard(i, &G) == outpost){
+                // printf("1: outpost played from position %d\n", i);
+                playCard(i, 0, 0, 0, &G);
+            }
+            else if(handCard(i, &G) == council_room){
+                // printf("1: council_room played from position %d\n", i);
+                playCard(i, 0, 0, 0, &G);
+            }
+            else if(handCard(i, &G) == baron){
+                // printf("1: baron played from position %d\n", i);
+                playCard(i, rand()%1, 0, 0, &G);
+            }
+            else if(handCard(i, &G) == mine){
+                // printf("1: mine played from position %d\n", i);
+                playCard(i, 0, 0, 0, &G);
+            }
+            else if (handCard(i, &G) == copper){
+              playCard(i, -1, -1, -1, &G);
+              money++;
+            }
+            else if (handCard(i, &G) == silver){
+              playCard(i, -1, -1, -1, &G);
+              money += 2;
+            }
+            else if (handCard(i, &G) == gold){
+              playCard(i, -1, -1, -1, &G);
+              money += 3;
+            }
+
+
+
+            i++;
+
+          }
+
+        }
+
+        if (money >= 8) {
+          // printf("1: bought province\n");
+          buyCard(province, &G);
+        }
+        else if ((money >= 6) && (numAdventurers < 2)) {
+          // printf("1: bought adventurer\n");
+          buyCard(adventurer, &G);
+          numAdventurers++;
+        }else if (money >= 6){
+          // printf("1: bought gold\n");
+  	    buyCard(gold, &G);
+          }
+        else if (money >= 3){
+          // printf("1: bought silver\n");
+  	    buyCard(silver, &G);
+        }
+        // printf("1: endTurn\n");
+
+        endTurn(&G);
+      }
+
+  } // end of While
+
+    // printf ("Finished game.\n");
+    // printf ("Player 0: %d\nPlayer 1: %d\n", scoreFor(0, &G), scoreFor(1, &G));
+    int playerArray[G.numPlayers];
+    for(i=0; i< G.numPlayers; i++) {
+      playerArray[i] = i;
+      scoreFor(i, &G);
+    }
+    getWinners(playerArray, &G);
+
+
+    return 0;
+  }

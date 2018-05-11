@@ -57,7 +57,6 @@ int checkAdventurereCard(int handPosition, int choice1, int choice2, int choice3
   // printf("\n");
   // printf("post treasureCardCount: %d\n", postTreasureCardHandCount);
 
-
   int fullDeckCountCopper = fullDeckCount(p, copper, &pre);
   int fullDeckCountSilver = fullDeckCount(p, silver, &pre);
   int fullDeckCountGold = fullDeckCount(p, gold, &pre);
@@ -73,7 +72,6 @@ int checkAdventurereCard(int handPosition, int choice1, int choice2, int choice3
     assertTrue(post->hand[p][i] == copper || post->hand[p][i] == silver || post->hand[p][i] == gold, "Card added was a treasure card");
   }
 
-  // printf("treasureCardCountInDeckAndDiscard: %d\n", treasureCardCountInDeckAndDiscard);
   if(treasureCardCountInDeckAndDiscard > 2) {
   printf("pre treasureCardCount: %d\n", preTreasureCardHandCount);
   printf("post treasureCardCount: %d\n", postTreasureCardHandCount);
@@ -89,7 +87,6 @@ int checkAdventurereCard(int handPosition, int choice1, int choice2, int choice3
   }
 
   assertTrue(r == 0, "Play playAdventurere() returned 0");
-  //assertTrue(memcmp(&pre, post, sizeof(struct gameState)) == 0, "(memcmp(&pre, post, sizeof(struct gameState)) == 0)");
 
   return r;
 }
@@ -107,13 +104,12 @@ int isIn(int cardArray[10], int index) {
 
 int main() {
 
-// printf("Starting..\n");
 srand(time(NULL));
 int currentPlayer, handPos, i, n, randomNum, choice1, choice2, choice3;
 struct gameState G;
 
-// SelectStream(2);
-// PutSeed(3);
+SelectStream(2);
+PutSeed(3);
 
 for (n = 0; n < 5000; n++) {
   // printf("loop# %d\n", n);
@@ -169,22 +165,23 @@ for (n = 0; n < 5000; n++) {
 
     // randomize hand, deck, and discard
     if(G.numPlayers > 1){
-      //G.handCount[currentPlayer+1] = floor(Random() * MAX_HAND);
-      for(int j = 0; j < G.handCount[currentPlayer+1]; j++) {
-        randomNum = rand() % 26;
-        G.hand[currentPlayer+1][j] = randomNum;
-      }
-      for(int j = 0; j < G.deckCount[currentPlayer+1]; j++) {
-        randomNum = rand() % 26;
-        G.deck[currentPlayer+1][j] = randomNum;
-      }
-      for(int j = 0; j < G.discardCount[currentPlayer+1]; j++) {
-        randomNum = rand() % 26;
-        G.discard[currentPlayer+1][j] = randomNum;
+      for(int i = 0; i < G.numPlayers; i++){
+        //G.handCount[currentPlayer+1] = floor(Random() * MAX_HAND);
+        for(int j = 0; j < G.handCount[i]; j++) {
+          randomNum = rand() % 26;
+          G.hand[i][j] = randomNum;
+        }
+        for(int j = 0; j < G.deckCount[i]; j++) {
+          randomNum = rand() % 26;
+          G.deck[i][j] = randomNum;
+        }
+        for(int j = 0; j < G.discardCount[i]; j++) {
+          randomNum = rand() % 26;
+          G.discard[i][j] = randomNum;
+        }
       }
     }
 
-  i = 10;
 
   // printf("Setting handPos 0f adventurer...\n");
   handPos = floor(Random() * G.handCount[currentPlayer]);
@@ -283,9 +280,8 @@ for (n = 0; n < 5000; n++) {
        playCard(handPosTreasureMap, choice1, choice2, choice3, &G);
      }
 
-  printf("Playing card...%d\n", handCard(i, &G));
+   i = 10;// printf("Playing card...%d\n", handCard(i, &G));
   playCard(G.hand[currentPlayer][i], choice1, choice2, choice3, &G);
-
 
   playDom(handPos, k, randomNum);
 
@@ -299,13 +295,12 @@ for (n = 0; n < 5000; n++) {
 
 }
 
-
+// a simple simulated play through of a dominion game to test card usage in a "real" Setting
+// code was taken from playdom.c
 int playDom(int handPosition, int kingdom[10], int seed) {
     struct gameState G;
     int n;
     int i=0;
-
-    printf ("Starting game.\n");
 
     seed = 100 + rand() % 2000;
     initializeGame(2, kingdom, seed, &G);
@@ -340,9 +335,9 @@ int playDom(int handPosition, int kingdom[10], int seed) {
 
       if (whoseTurn(&G) == 0) {
         if (smithyPos != -1) {
-          printf("0: smithy played from position %d\n", smithyPos);
+          // printf("0: smithy played from position %d\n", smithyPos);
           playCard(smithyPos, -1, -1, -1, &G);
-          printf("smithy played.\n");
+          // printf("smithy played.\n");
           money = 0;
           i=0;
           while(i<numHandCards(&G)){
@@ -364,52 +359,52 @@ int playDom(int handPosition, int kingdom[10], int seed) {
       }
 
         if (money >= 8) {
-          printf("0: bought province\n");
+          // printf("0: bought province\n");
           buyCard(province, &G);
         }
         else if (money >= 6) {
-          printf("0: bought gold\n");
+          // printf("0: bought gold\n");
           buyCard(gold, &G);
         }
         else if ((money >= 4) && (numSmithies < 2)) {
-          printf("0: bought smithy\n");
+          // printf("0: bought smithy\n");
           buyCard(smithy, &G);
           numSmithies++;
         }
         else if (money >= 3) {
-          printf("0: bought silver\n");
+          // printf("0: bought silver\n");
           buyCard(silver, &G);
         }
 
-        printf("0: end turn\n");
+        // printf("0: end turn\n");
         endTurn(&G);
       }
       else {
         if (adventurerPos != -1) {
-          printf("1: adventurer played from position %d\n", adventurerPos);
+          // printf("1: adventurer played from position %d\n", adventurerPos);
           checkAdventurereCard(handPosition, -1, -1, -1, &G, 1);
           money = 0;
           i=0;
           while(i<numHandCards(&G)){
             if(handCard(i, &G) == steward){
-              printf("1: steward played from position %d\n", i);
+              // printf("1: steward played from position %d\n", i);
               playCard(i, 1, 0, 0, &G);
             }
             else if(handCard(i, &G) == outpost){
-                printf("1: outpost played from position %d\n", i);
+                // printf("1: outpost played from position %d\n", i);
                 playCard(i, 0, 0, 0, &G);
             }
             else if(handCard(i, &G) == council_room){
-                printf("1: council_room played from position %d\n", i);
+                // printf("1: council_room played from position %d\n", i);
                 playCard(i, 0, 0, 0, &G);
             }
             else if(handCard(i, &G) == baron){
-                printf("1: baron played from position %d\n", i);
+                // printf("1: baron played from position %d\n", i);
                 playCard(i, rand()%1, 0, 0, &G);
             }
             else if(handCard(i, &G) == mine){
-                printf("1: mine played from position %d\n", i);
-                playCard(i, rand()%9, 0, 0, &G);
+                // printf("1: mine played from position %d\n", i);
+                playCard(i, 0, 0, 0, &G);
             }
             else if (handCard(i, &G) == copper){
               playCard(i, -1, -1, -1, &G);
@@ -433,30 +428,30 @@ int playDom(int handPosition, int kingdom[10], int seed) {
         }
 
         if (money >= 8) {
-          printf("1: bought province\n");
+          // printf("1: bought province\n");
           buyCard(province, &G);
         }
         else if ((money >= 6) && (numAdventurers < 2)) {
-          printf("1: bought adventurer\n");
+          // printf("1: bought adventurer\n");
           buyCard(adventurer, &G);
           numAdventurers++;
         }else if (money >= 6){
-          printf("1: bought gold\n");
+          // printf("1: bought gold\n");
   	    buyCard(gold, &G);
           }
         else if (money >= 3){
-          printf("1: bought silver\n");
+          // printf("1: bought silver\n");
   	    buyCard(silver, &G);
         }
-        printf("1: endTurn\n");
+        // printf("1: endTurn\n");
 
         endTurn(&G);
       }
 
   } // end of While
 
-    printf ("Finished game.\n");
-    printf ("Player 0: %d\nPlayer 1: %d\n", scoreFor(0, &G), scoreFor(1, &G));
+    // printf ("Finished game.\n");
+    // printf ("Player 0: %d\nPlayer 1: %d\n", scoreFor(0, &G), scoreFor(1, &G));
     int playerArray[G.numPlayers];
     for(i=0; i< G.numPlayers; i++) {
       playerArray[i] = i;
