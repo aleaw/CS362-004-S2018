@@ -60,6 +60,19 @@ cardtest4: cardtest4.c dominion.o rngs.o
 cardtest5: cardtest5.c dominion.o rngs.o
 			  gcc -o cardtest5 -g  cardtest5.c dominion.o rngs.o $(CFLAGS)
 
+randomtestcard1: randomtestcard1.c dominion.o rngs.o
+			  gcc -o randomtestcard1 -g  randomtestcard1.c dominion.o rngs.o $(CFLAGS)
+
+randomtestcard2: randomtestcard2.c dominion.o rngs.o
+			  gcc -o randomtestcard2 -g  randomtestcard2.c dominion.o rngs.o $(CFLAGS)
+
+randomtestadventurer: randomtestadventurer.c dominion.o rngs.o
+			  gcc -o randomtestadventurer -g  randomtestadventurer.c dominion.o rngs.o $(CFLAGS)
+
+testRandomizeGame: testRandomizeGame.c dominion.o rngs.o
+			  gcc -o testRandomizeGame -g  testRandomizeGame.c dominion.o rngs.o $(CFLAGS)
+
+
 unittestresults.out: cardtest1 cardtest2 cardtest3 cardtest4 unittest1 unittest2 unittest3 unittest4
 	./cardtest1 &> unittestresults.out
 	gcov dominion.c -b >> unittestresults.out
@@ -78,6 +91,13 @@ unittestresults.out: cardtest1 cardtest2 cardtest3 cardtest4 unittest1 unittest2
 	./unittest4 >> unittestresults.out
 	gcov dominion.c -b >> unittestresults.out
 
+randomTestResults: randomtestcard1 randomtestcard2 randomtestadventurer
+	./randomtestcard1
+	gcov dominion.c -b
+	./randomtestcard2
+	gcov dominion.c -b
+	./randomtestadventurer
+	gcov dominion.c -b
 
 player: player.c interface.o
 	gcc -o player player.c -g  dominion.o rngs.o interface.o $(CFLAGS)
@@ -85,4 +105,4 @@ player: player.c interface.o
 all: playdom player cardtest1 cardtest2 cardtest3 cardtest4 unittest1 unittest2 unittest3 unittest4
 
 clean:
-	rm -f *.o playdom.exe playdom player player.exe  *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe cardtest1 cardtest1.exe cardtest2 cardtest2.exe cardtest3 cardtest3.exe cardtest4 cardtest4.exe cardtest5 cardtest5.exe unittestresults.out unittest1.exe unittest1 unittest2.exe unittest2 unittest3.exe unittest3 unittest4.exe unittest4 unittestresults.out
+	rm -f *.o playdom.exe playdom player player.exe  *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe cardtest1 cardtest1.exe cardtest2 cardtest2.exe cardtest3 cardtest3.exe cardtest4 cardtest4.exe cardtest5 cardtest5.exe unittestresults.out unittest1.exe unittest1 unittest2.exe unittest2 unittest3.exe unittest3 unittest4.exe unittest4 unittestresults.out randomtestcard1.exe randomtestcard1 randomtestcard2.exe randomtestcard2 randomtestadventurer.exe randomtestadventurer
