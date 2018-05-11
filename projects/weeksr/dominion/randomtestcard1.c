@@ -72,12 +72,11 @@ int checkStewardCard(int handPosition, int choice1, int choice2, int choice3, st
       assertTrue(post->deckCount[p] == pre.deckCount[p] - newCards, "Deck count -- deck is empty but discard is not");
     }
   }
-  else if(choice2 == 2) {
+  else if(choice1 == 2) {
     newCoins = 2;
     pre.coins += newCoins;
     printf("coin count = %d, expected = %d\n", post->coins, pre.coins);
     assertTrue(post->coins == pre.coins, "Coin count");
-
   }
 
 else {
