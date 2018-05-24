@@ -71,6 +71,12 @@ int checkStewardCard(int handPosition, int choice1, int choice2, int choice3, st
       assertTrue(post->handCount[p] == pre.handCount[p] + newCards - discarded, "Hand count -- deck is empty but discard is not");
       assertTrue(post->deckCount[p] == pre.deckCount[p] - newCards, "Deck count -- deck is empty but discard is not");
     }
+    else {
+      printf("post - pre handCount: %d\n", post->handCount[p] - pre.handCount[p]);
+      printf("pre - post deckCount: %d\n", pre.deckCount[p] - post->deckCount[p]);
+      assertTrue(post->handCount[p] - pre.handCount[p] <= 1, "no more than 2 cards were added to hand");
+      assertTrue(pre.deckCount[p] - post->deckCount[p] <= 2, "no more than 2 cards were drawn from deck");
+    }
   }
   else if(choice1 == 2) {
     newCoins = 2;
@@ -193,102 +199,102 @@ for (n = 0; n < 5000; n++) {
   checkStewardCard(handPos, choice1, choice2, choice3, &G, currentPlayer);
 
 
-  //play baron
-  if(G.handCount[currentPlayer] > 2){
-    int handPosBaron = floor(Random() * G.handCount[currentPlayer]);
-    G.hand[currentPlayer][handPosBaron] = baron;
-    while(handPosBaron == handPos){
-      handPosBaron = floor(Random() * G.handCount[currentPlayer]);
-    }
-    choice1 = rand() % 100;
-    playCard(handPosBaron, choice1, choice2, choice3, &G);
-  }
+  // //play baron
+  // if(G.handCount[currentPlayer] > 2){
+  //   int handPosBaron = floor(Random() * G.handCount[currentPlayer]);
+  //   G.hand[currentPlayer][handPosBaron] = baron;
+  //   while(handPosBaron == handPos){
+  //     handPosBaron = floor(Random() * G.handCount[currentPlayer]);
+  //   }
+  //   choice1 = rand() % 100;
+  //   playCard(handPosBaron, choice1, choice2, choice3, &G);
+  // }
+  //
+  // // play mine
+  // if(G.handCount[currentPlayer] > 2){
+  //   int handPosMine = floor(Random() * G.handCount[currentPlayer]);
+  //   int moneyPos = floor(Random() * G.handCount[currentPlayer]);
+  //   G.hand[currentPlayer][moneyPos] = 3 + rand() % 7;
+  //   while(handPosMine == moneyPos){
+  //     moneyPos = floor(Random() * G.handCount[currentPlayer]);
+  //   }
+  //   G.hand[currentPlayer][handPosMine] = mine;
+  //   choice1 = moneyPos;
+  //   int choice2 = floor(Random() * G.supplyCount[rand() % 27]);
+  //   playCard(handPosMine, choice1, choice2, choice3, &G);
+  // }
+  //
+  // // play remodel
+  // if(G.handCount[currentPlayer] > 2){
+  //   int handPosRemodel = floor(Random() * G.handCount[currentPlayer]);
+  //   G.hand[currentPlayer][handPosRemodel] = remodel;
+  //   int trashPos = floor(Random() * G.handCount[currentPlayer]);
+  //   G.hand[currentPlayer][trashPos] = 3 + rand() % 7;
+  //   while(handPosRemodel == trashPos){
+  //     trashPos = floor(Random() * G.handCount[currentPlayer]);
+  //   }
+  //   choice1 = trashPos;
+  //   int choice2 = floor(Random() * G.supplyCount[rand() % 27]);
+  //   playCard(handPosRemodel, choice1, choice2, choice3, &G);
+  // }
+  //
+  // // play minion
+  // if(G.handCount[currentPlayer] > 2){
+  //   int handPosMinion = floor(Random() * G.handCount[currentPlayer]);
+  //   G.hand[currentPlayer][handPosMinion] = minion;
+  //   choice1 = rand() % 2;
+  //   int choice2 = rand() % 2;
+  //   G.handCount[currentPlayer+1] = 6;
+  //   playCard(handPosMinion, choice1, choice2, choice3, &G);
+  // }
 
-  // play mine
-  if(G.handCount[currentPlayer] > 2){
-    int handPosMine = floor(Random() * G.handCount[currentPlayer]);
-    int moneyPos = floor(Random() * G.handCount[currentPlayer]);
-    G.hand[currentPlayer][moneyPos] = 3 + rand() % 7;
-    while(handPosMine == moneyPos){
-      moneyPos = floor(Random() * G.handCount[currentPlayer]);
-    }
-    G.hand[currentPlayer][handPosMine] = mine;
-    choice1 = moneyPos;
-    int choice2 = floor(Random() * G.supplyCount[rand() % 27]);
-    playCard(handPosMine, choice1, choice2, choice3, &G);
-  }
+ //  // play steward
+ // if(G.handCount[currentPlayer] > 2){
+ //    //choice1 = 0; choice2 = 0; choice3 = 0;
+ //    // randomize choice selection
+ //    randomNum = rand() % 3;
+ //    choice1 = randomNum;
+ //    int handPosSteward = floor(Random() * G.handCount[currentPlayer]);
+ //    G.hand[currentPlayer][handPosSteward] = steward;
+ //    playCard(handPosSteward, choice1, choice2, choice3, &G);
+ //  }
 
-  // play remodel
-  if(G.handCount[currentPlayer] > 2){
-    int handPosRemodel = floor(Random() * G.handCount[currentPlayer]);
-    G.hand[currentPlayer][handPosRemodel] = remodel;
-    int trashPos = floor(Random() * G.handCount[currentPlayer]);
-    G.hand[currentPlayer][trashPos] = 3 + rand() % 7;
-    while(handPosRemodel == trashPos){
-      trashPos = floor(Random() * G.handCount[currentPlayer]);
-    }
-    choice1 = trashPos;
-    int choice2 = floor(Random() * G.supplyCount[rand() % 27]);
-    playCard(handPosRemodel, choice1, choice2, choice3, &G);
-  }
+  // // play tribute
+  // if(G.handCount[currentPlayer] > 2){
+  //    int handPosTribute = floor(Random() * G.handCount[currentPlayer]);
+  //    G.hand[currentPlayer][handPosTribute] = tribute;
+  //    playCard(handPosTribute, choice1, choice2, choice3, &G);
+  //  }
+  //
+  //  // play ambassador
+  //  if(G.handCount[currentPlayer] > 2){
+  //     int handPosAmbassador = floor(Random() * G.handCount[currentPlayer]);
+  //     G.hand[currentPlayer][handPosAmbassador] = ambassador;
+  //     choice1 = floor(Random() * G.handCount[currentPlayer]);
+  //     choice2 = floor(Random() * G.handCount[currentPlayer]);
+  //     playCard(handPosAmbassador, choice1, choice2, choice3, &G);
+  //   }
+  //
+  //   //play treasure_map
+  //   if(G.handCount[currentPlayer] > 2){
+  //      int handPosTreasureMap = floor(Random() * G.handCount[currentPlayer]);
+  //      G.hand[currentPlayer][handPosTreasureMap] = treasure_map;
+  //      handPosTreasureMap = floor(Random() * G.handCount[currentPlayer]);
+  //      G.hand[currentPlayer][handPosTreasureMap] = treasure_map;
+  //      playCard(handPosTreasureMap, choice1, choice2, choice3, &G);
+  //    }
+  //
+  //  i = 10;// printf("Playing card...%d\n", handCard(i, &G));
+  // playCard(G.hand[currentPlayer][i], choice1, choice2, choice3, &G);
 
-  // play minion
-  if(G.handCount[currentPlayer] > 2){
-    int handPosMinion = floor(Random() * G.handCount[currentPlayer]);
-    G.hand[currentPlayer][handPosMinion] = minion;
-    choice1 = rand() % 2;
-    int choice2 = rand() % 2;
-    G.handCount[currentPlayer+1] = 6;
-    playCard(handPosMinion, choice1, choice2, choice3, &G);
-  }
-
-  // play steward
- if(G.handCount[currentPlayer] > 2){
-    //choice1 = 0; choice2 = 0; choice3 = 0;
-    // randomize choice selection
-    randomNum = rand() % 3;
-    choice1 = randomNum;
-    int handPosSteward = floor(Random() * G.handCount[currentPlayer]);
-    G.hand[currentPlayer][handPosSteward] = steward;
-    playCard(handPosSteward, choice1, choice2, choice3, &G);
-  }
-
-  // play tribute
-  if(G.handCount[currentPlayer] > 2){
-     int handPosTribute = floor(Random() * G.handCount[currentPlayer]);
-     G.hand[currentPlayer][handPosTribute] = tribute;
-     playCard(handPosTribute, choice1, choice2, choice3, &G);
-   }
-
-   // play ambassador
-   if(G.handCount[currentPlayer] > 2){
-      int handPosAmbassador = floor(Random() * G.handCount[currentPlayer]);
-      G.hand[currentPlayer][handPosAmbassador] = ambassador;
-      choice1 = floor(Random() * G.handCount[currentPlayer]);
-      choice2 = floor(Random() * G.handCount[currentPlayer]);
-      playCard(handPosAmbassador, choice1, choice2, choice3, &G);
-    }
-
-    //play treasure_map
-    if(G.handCount[currentPlayer] > 2){
-       int handPosTreasureMap = floor(Random() * G.handCount[currentPlayer]);
-       G.hand[currentPlayer][handPosTreasureMap] = treasure_map;
-       handPosTreasureMap = floor(Random() * G.handCount[currentPlayer]);
-       G.hand[currentPlayer][handPosTreasureMap] = treasure_map;
-       playCard(handPosTreasureMap, choice1, choice2, choice3, &G);
-     }
-
-   i = 10;// printf("Playing card...%d\n", handCard(i, &G));
-  playCard(G.hand[currentPlayer][i], choice1, choice2, choice3, &G);
-
-  playDom(handPos, k, randomNum);
-
-  int playerArray[G.numPlayers];
-  for(i=0; i< G.numPlayers; i++) {
-    playerArray[i] = i;
-    scoreFor(i, &G);
-  }
-  getWinners(playerArray, &G);
+  // playDom(handPos, k, randomNum);
+  //
+  // int playerArray[G.numPlayers];
+  // for(i=0; i< G.numPlayers; i++) {
+  //   playerArray[i] = i;
+  //   scoreFor(i, &G);
+  // }
+  // getWinners(playerArray, &G);
 }
 
 }

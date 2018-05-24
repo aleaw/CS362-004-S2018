@@ -94,15 +94,10 @@
   // expected number of new cards
   printf("hand count = %d, expected = %d\n", testGameState.handCount[thisPlayer], G.handCount[thisPlayer] + drawnTreasure);
   printf("deck count = %d, expected = %d\n", testGameState.deckCount[thisPlayer], G.deckCount[thisPlayer] - (drawnTreasure + G.discardCount[thisPlayer]));
-  printf("action count = %d, expected = %d\n", testGameState.numActions, G.numActions);
-  printf("coin count = %d, expected = %d\n", testGameState.coins, G.coins);
 
 
   assertTrue(testGameState.handCount[thisPlayer] == G.handCount[thisPlayer] + drawnTreasure, "current player's hand count");
   assertTrue(testGameState.deckCount[thisPlayer] ==  G.deckCount[thisPlayer] - (drawnTreasure + G.discardCount[thisPlayer]), "current player's deck count");
-  assertTrue(testGameState.numActions == G.numActions, "current player's number of actions");
-  assertTrue(testGameState.coins == G.coins, "current player's number of actions");
-
 
 
   thisPlayer = 1;
@@ -110,11 +105,9 @@
   printf("\n*** Testing stats of player %d ***\n", thisPlayer);
   printf("hand count = %d, expected = %d\n", testGameState.handCount[thisPlayer], G.handCount[thisPlayer]);
   printf("deck count = %d, expected = %d\n", testGameState.deckCount[thisPlayer], G.deckCount[thisPlayer]);
-  printf("action count = %d, expected = %d\n", testGameState.numActions, G.numActions);
 
   assertTrue(testGameState.handCount[thisPlayer] == G.handCount[thisPlayer], "noncurrent player's hand count");
   assertTrue(testGameState.deckCount[thisPlayer] == G.deckCount[thisPlayer], "noncurrent player's deck count");
-  assertTrue(testGameState.numActions == G.numActions, "noncurrent player's number of actions");
 
 
   printf("\n----------------- Test 2: 1 treasure in deck  hand: %s ----------------\n", TESTCARD);
@@ -159,15 +152,10 @@
   // expected number of new cards
   printf("hand count = %d, expected = %d\n", testGameState.handCount[thisPlayer], G.handCount[thisPlayer] + drawnTreasure);
   printf("deck count = %d, expected = %d\n", testGameState.deckCount[thisPlayer], G.deckCount[thisPlayer] - (drawnTreasure + G.discardCount[thisPlayer]));
-  printf("action count = %d, expected = %d\n", testGameState.numActions, G.numActions);
-  printf("coin count = %d, expected = %d\n", testGameState.coins, G.coins);
 
 
   assertTrue(testGameState.handCount[thisPlayer] == G.handCount[thisPlayer] + drawnTreasure, "current player's hand count");
   assertTrue(testGameState.deckCount[thisPlayer] ==  G.deckCount[thisPlayer] - (drawnTreasure + G.discardCount[thisPlayer]), "current player's deck count");
-  assertTrue(testGameState.numActions == G.numActions, "current player's number of actions");
-  assertTrue(testGameState.coins == G.coins, "current player's number of actions");
-
 
 
   thisPlayer = 1;
@@ -175,11 +163,9 @@
   printf("\n*** Testing stats of player %d ***\n", thisPlayer);
   printf("hand count = %d, expected = %d\n", testGameState.handCount[thisPlayer], G.handCount[thisPlayer]);
   printf("deck count = %d, expected = %d\n", testGameState.deckCount[thisPlayer], G.deckCount[thisPlayer]);
-  printf("action count = %d, expected = %d\n", testGameState.numActions, G.numActions);
 
   assertTrue(testGameState.handCount[thisPlayer] == G.handCount[thisPlayer], "noncurrent player's hand count");
   assertTrue(testGameState.deckCount[thisPlayer] == G.deckCount[thisPlayer], "noncurrent player's deck count");
-  assertTrue(testGameState.numActions == G.numActions, "noncurrent player's number of actions");
 
   printf("\n----------------- Test 2: 2 treasures in deck  hand: %s ----------------\n", TESTCARD);
 
@@ -223,27 +209,18 @@
   // expected number of new cards
   printf("hand count = %d, expected = %d\n", testGameState.handCount[thisPlayer], G.handCount[thisPlayer] + drawnTreasure);
   printf("deck count = %d, expected = %d\n", testGameState.deckCount[thisPlayer], G.deckCount[thisPlayer] - (drawnTreasure + G.discardCount[thisPlayer]));
-  printf("action count = %d, expected = %d\n", testGameState.numActions, G.numActions);
-  printf("coin count = %d, expected = %d\n", testGameState.coins, G.coins);
-
 
   assertTrue(testGameState.handCount[thisPlayer] == G.handCount[thisPlayer] + drawnTreasure, "current player's hand count");
   assertTrue(testGameState.deckCount[thisPlayer] ==  G.deckCount[thisPlayer] - (drawnTreasure + G.discardCount[thisPlayer]), "current player's deck count");
-  assertTrue(testGameState.numActions == G.numActions, "current player's number of actions");
-  assertTrue(testGameState.coins == G.coins, "current player's number of actions");
-
-
 
   thisPlayer = 1;
   drawnCards = 0;
   printf("\n*** Testing stats of player %d ***\n", thisPlayer);
   printf("hand count = %d, expected = %d\n", testGameState.handCount[thisPlayer], G.handCount[thisPlayer]);
   printf("deck count = %d, expected = %d\n", testGameState.deckCount[thisPlayer], G.deckCount[thisPlayer]);
-  printf("action count = %d, expected = %d\n", testGameState.numActions, G.numActions);
 
   assertTrue(testGameState.handCount[thisPlayer] == G.handCount[thisPlayer], "noncurrent player's hand count");
   assertTrue(testGameState.deckCount[thisPlayer] == G.deckCount[thisPlayer], "noncurrent player's deck count");
-  assertTrue(testGameState.numActions == G.numActions, "noncurrent player's number of actions");
 
   printf("\n----------------- Test 2: 2 silvers in deck  hand: %s ----------------\n", TESTCARD);
 
@@ -287,15 +264,9 @@
   // expected number of new cards
   printf("hand count = %d, expected = %d\n", testGameState.handCount[thisPlayer], G.handCount[thisPlayer] + drawnTreasure);
   printf("deck count = %d, expected = %d\n", testGameState.deckCount[thisPlayer], G.deckCount[thisPlayer] - (drawnTreasure + G.discardCount[thisPlayer]));
-  printf("action count = %d, expected = %d\n", testGameState.numActions, G.numActions);
-  printf("coin count = %d, expected = %d\n", testGameState.coins, G.coins);
-
 
   assertTrue(testGameState.handCount[thisPlayer] == G.handCount[thisPlayer] + drawnTreasure, "current player's hand count");
   assertTrue(testGameState.deckCount[thisPlayer] ==  G.deckCount[thisPlayer] - (drawnTreasure + G.discardCount[thisPlayer]), "current player's deck count");
-  assertTrue(testGameState.numActions == G.numActions, "current player's number of actions");
-  assertTrue(testGameState.coins == G.coins, "current player's number of actions");
-
 
 
   thisPlayer = 1;
@@ -303,11 +274,9 @@
   printf("\n*** Testing stats of player %d ***\n", thisPlayer);
   printf("hand count = %d, expected = %d\n", testGameState.handCount[thisPlayer], G.handCount[thisPlayer]);
   printf("deck count = %d, expected = %d\n", testGameState.deckCount[thisPlayer], G.deckCount[thisPlayer]);
-  printf("action count = %d, expected = %d\n", testGameState.numActions, G.numActions);
 
   assertTrue(testGameState.handCount[thisPlayer] == G.handCount[thisPlayer], "noncurrent player's hand count");
   assertTrue(testGameState.deckCount[thisPlayer] == G.deckCount[thisPlayer], "noncurrent player's deck count");
-  assertTrue(testGameState.numActions == G.numActions, "noncurrent player's number of actions");
 
 
   printf("\n >>>>> SUCCESS: Testing complete %s <<<<<\n\n", TESTCARD);

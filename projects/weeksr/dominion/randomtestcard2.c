@@ -31,60 +31,73 @@ int checkSmithyCard(int handPosition, int choice1, int choice2, int choice3, str
 
   // int r = playSmithy(p, post, handPosition);
   int r = playCard(handPosition, choice1, choice2, choice3, post);
-  pre.numActions--;
-  pre.playedCardCount++;
+  // pre.numActions--;
+  // pre.playedCardCount++;
   int drawnCards = 0;
+  int playedCards = 1;
 
   if(pre.deckCount[p] >= 3 || pre.discardCount[p] >= 4){
     drawnCards = 3;
 
-    printf("hand count = %d, expected = %d\n", post->handCount[p], pre.handCount[p] + drawnCards);
+    printf("hand count = %d, expected = %d\n", post->handCount[p], pre.handCount[p] + drawnCards - playedCards);
     printf("deck count = %d, expected = %d\n", post->deckCount[p], pre.deckCount[p] - drawnCards);
 
-    assertTrue(post->handCount[p] == pre.handCount[p] + drawnCards, "current player's hand count");
+    assertTrue(post->handCount[p] == pre.handCount[p] + drawnCards - playedCards, "current player's hand count");
     assertTrue(post->deckCount[p] == pre.deckCount[p] - drawnCards, "current player's deck count");
   }
 
   if(pre.deckCount[p] == 2 || pre.discardCount[p] == 0){
     drawnCards = 2;
 
-    printf("hand count = %d, expected = %d\n", post->handCount[p], pre.handCount[p] + drawnCards);
+    printf("hand count = %d, expected = %d\n", post->handCount[p], pre.handCount[p] + drawnCards - playedCards);
     printf("deck count = %d, expected = %d\n", post->deckCount[p], pre.deckCount[p] - drawnCards);
 
-    assertTrue(post->handCount[p] == pre.handCount[p] + drawnCards, "current player's hand count");
+    assertTrue(post->handCount[p] == pre.handCount[p] + drawnCards - playedCards, "current player's hand count");
     assertTrue(post->deckCount[p] == pre.deckCount[p] - drawnCards, "current player's deck count");
   }
 
-  if(pre.deckCount[p] == 1 || pre.discardCount[p] == 0){
+  if(pre.deckCount[p] == 1 && pre.discardCount[p] == 0){
     drawnCards = 1;
 
-    printf("hand count = %d, expected = %d\n", post->handCount[p], pre.handCount[p] + drawnCards);
+    printf("hand count = %d, expected = %d\n", post->handCount[p], pre.handCount[p] + drawnCards - playedCards);
     printf("deck count = %d, expected = %d\n", post->deckCount[p], pre.deckCount[p] - drawnCards);
 
-    assertTrue(post->handCount[p] == pre.handCount[p] + drawnCards, "current player's hand count");
+    assertTrue(post->handCount[p] == pre.handCount[p] + drawnCards - playedCards, "current player's hand count");
     assertTrue(post->deckCount[p] == pre.deckCount[p] - drawnCards, "current player's deck count");
   }
 
-  if(pre.deckCount[p] == 0 || pre.discardCount[p] == 0){
+  if(pre.deckCount[p] == 0 && pre.discardCount[p] == 0){
     drawnCards = 0;
 
-    printf("hand count = %d, expected = %d\n", post->handCount[p], pre.handCount[p] + drawnCards);
+    printf("hand count = %d, expected = %d\n", post->handCount[p], pre.handCount[p] + drawnCards - playedCards);
     printf("deck count = %d, expected = %d\n", post->deckCount[p], pre.deckCount[p] - drawnCards);
 
-    assertTrue(post->handCount[p] == pre.handCount[p] + drawnCards, "current player's hand count");
+    assertTrue(post->handCount[p] == pre.handCount[p] + drawnCards - playedCards, "current player's hand count");
     assertTrue(post->deckCount[p] == pre.deckCount[p] - drawnCards, "current player's deck count");
   }
 
-  if(pre.deckCount[p] == 0 || pre.discardCount[p] >= 3){
+  if(pre.deckCount[p] == 0 && pre.discardCount[p] >= 3){
     drawnCards = 3;
 
-    printf("hand count = %d, expected = %d\n", post->handCount[p], pre.handCount[p] + drawnCards);
+    printf("hand count = %d, expected = %d\n", post->handCount[p], pre.handCount[p] + drawnCards - playedCards);
     printf("deck count = %d, expected = %d\n", post->deckCount[p], pre.deckCount[p] - drawnCards);
 
-    assertTrue(post->handCount[p] == pre.handCount[p] + drawnCards, "current player's hand count");
+    assertTrue(post->handCount[p] == pre.handCount[p] + drawnCards - playedCards, "current player's hand count");
     assertTrue(post->deckCount[p] == pre.deckCount[p] + (pre.discardCount[p] - drawnCards), "current player's deck count");
   }
 
+  else {
+    printf("****ELSE: \n");
+    printf("pre hand count = %d\n", pre.handCount[p]);
+    printf("pre deck count = %d\n", pre.deckCount[p]);
+    printf("post hand count = %d\n", post->handCount[p]);
+    printf("post deck count = %d\n", post->deckCount[p]);
+    printf("post - pre handCount: %d\n", post->handCount[p] - pre.handCount[p]);
+    printf("pre - post deckCount: %d\n", pre.deckCount[p] - post->deckCount[p]);
+    assertTrue(post->handCount[p] - pre.handCount[p] <= 2, "no more than 3 cards were added to hand");
+    assertTrue(pre.deckCount[p] - post->deckCount[p] <= 3, "no more than 3 cards were drawn from deck");
+
+  }
 
   assertTrue(r == 0, "Play playSmithy() returned 0");
 

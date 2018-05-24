@@ -98,14 +98,14 @@
   newActions = 2;
   printf("hand count = %d, expected = %d\n", testGameState.handCount[thisPlayer], G.handCount[thisPlayer] + newCards - discarded);
   printf("deck count = %d, expected = %d\n", testGameState.deckCount[thisPlayer], G.deckCount[thisPlayer] - newCards + shuffledCards);
-  printf("action count = %d, expected = %d\n", testGameState.numActions, G.numActions);
+  printf("action count = %d, expected = %d\n", testGameState.numActions, G.numActions + newActions - 1);
   printf("# cards in discard pile = %d, expected = %d\n", testGameState.discardCount[thisPlayer], discarded);
   printf("drawn card = %d, expected = %d\n", testGameState.hand[thisPlayer][0], 1); // expected drawn card is estate
 
 
   assertTrue(testGameState.handCount[thisPlayer] == G.handCount[thisPlayer] + newCards - discarded, "current player's hand count");
   assertTrue(testGameState.deckCount[thisPlayer] == G.deckCount[thisPlayer] - newCards + shuffledCards, "current player's deck count");
-  assertTrue(testGameState.numActions == G.numActions + newActions, "current player's number of actions");
+  assertTrue(testGameState.numActions == G.numActions + newActions - 1, "current player's number of actions");
   assertTrue(testGameState.discardCount[thisPlayer] == 1, "village is in discard pile");
   assertTrue(testGameState.hand[thisPlayer][0] == 1, "estate was added to hand");
 

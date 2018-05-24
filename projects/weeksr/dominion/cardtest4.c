@@ -37,6 +37,8 @@
      int numPlayers = 2;
      int thisPlayer = 0;
  	   struct gameState G, testGameState;
+     G.numBuys = 0;
+     G.handCount[thisPlayer] = 5;
  	   int k[10] = {adventurer, embargo, village, minion, mine, cutpurse,
  			sea_hag, tribute, smithy, council_room};
 
@@ -63,22 +65,15 @@
   assertTrue(testGameState.numActions == G.numActions, "current player's number of actions");
   assertTrue(testGameState.numBuys == G.numBuys + newBuys, "current player's number of buys");
 
-
   thisPlayer = 1;
   drawnCards = 1;
   newBuys = 0;
   printf("\n*** Testing stats of player %d ***\n", thisPlayer);
   printf("hand count = %d, expected = %d\n", testGameState.handCount[thisPlayer], G.handCount[thisPlayer] + drawnCards);
   printf("deck count = %d, expected = %d\n", testGameState.deckCount[thisPlayer], G.deckCount[thisPlayer] - drawnCards);
-  printf("action count = %d, expected = %d\n", testGameState.numActions, G.numActions);
-  printf("buy count = %d, expected = %d\n", testGameState.numBuys, G.numBuys + newBuys);
-
 
   assertTrue(testGameState.handCount[thisPlayer] == G.handCount[thisPlayer] + drawnCards, "noncurrent player's hand count");
   assertTrue(testGameState.deckCount[thisPlayer] == G.deckCount[thisPlayer] - drawnCards, "noncurrent player's deck count");
-  assertTrue(testGameState.numActions == G.numActions, "noncurrent player's number of actions");
-  assertTrue(testGameState.numBuys == G.numBuys + newBuys, "noncurrent player's number of buys");
-
 
   printf("\n >>>>> SUCCESS: Testing complete %s <<<<<\n\n", TESTCARD);
 
